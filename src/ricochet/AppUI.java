@@ -30,11 +30,11 @@ public class AppUI extends JFrame implements ActionListener  {
     private GridBagLayout controlGrid = new GridBagLayout();
     private Clockhandlerclass clockhandler;
     
-    private JTextField inputRefreshRateTextField = new JTextField();
-    private JTextField inputSpeedTextField = new JTextField();
-    private JTextField inputDirectionTextField = new JTextField();
-    private JTextField inputLocationX = new JTextField();
-    private JTextField inputLocationY = new JTextField();
+    private JTextField inputRefreshRateTextField = new JTextField("100");
+    private JTextField inputSpeedTextField = new JTextField("800");
+    private JTextField inputDirectionTextField = new JTextField("120");
+    private JTextField inputLocationX = new JTextField("400");
+    private JTextField inputLocationY = new JTextField("200");
     
     private JButton startButton = new JButton("Start");
     private JButton quitButton = new JButton("Quit");
@@ -69,8 +69,6 @@ public class AppUI extends JFrame implements ActionListener  {
         /*
         Control Panel Setup
         */
-        
-//        controlGrid = new GridLayout(2, 4, 80, 50);
         
         pnlControl.setBackground(Color.PINK);
         pnlControl.setLayout(controlGrid);
@@ -172,10 +170,11 @@ public class AppUI extends JFrame implements ActionListener  {
                         if (Double.isNaN(locationY) || locationY < 0) throw new Exception();
                         
                         
-                        pnlField.initializeBall(speed, locationX, locationY);
+                        pnlField.initializeBall(speed, locationX, locationY, refreshRate, direction);
                         
 
                         //delay= 1000ms/hz. Converts refresh rate into delay between ticks.
+                        System.out.println("Delay: " + (int)(1000/refreshRate));
                         timer.setDelay((int)(1000/refreshRate));
                         
                         timer.start();
@@ -194,7 +193,14 @@ public class AppUI extends JFrame implements ActionListener  {
             } else if (e.getSource() == quitButton) {
                 System.exit(0);
             } else if (e.getSource() == clearButton) {
-             //clear the boxes   
+                //clear the boxes   
+                timer.stop();
+                inputSpeedTextField.setText("");
+                inputRefreshRateTextField.setText("");
+                inputDirectionTextField.setText("");
+                inputLocationX.setText("");
+                inputLocationY.setText("");
+                startButton.setText("Start");
             }
         }
 
