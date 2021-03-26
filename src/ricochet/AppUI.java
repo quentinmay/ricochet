@@ -8,6 +8,8 @@ package ricochet;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.*;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,9 +26,12 @@ public class AppUI extends JFrame implements ActionListener  {
     private JPanel pnlTitle = new JPanel();
     private JPanel pnlField = new JPanel();
     private JPanel pnlControl = new JPanel();
+    private GridBagLayout controlGrid = new GridBagLayout();
     private Clockhandlerclass clockhandler;
     
+    private JTextField inputRefreshRateTextField = new JTextField();
     private JTextField inputSpeedTextField = new JTextField();
+    private JTextField inputDirectionTextField = new JTextField();
     
     private JButton startButton = new JButton("Start");
     private JButton quitButton = new JButton("Quit");
@@ -61,21 +66,47 @@ public class AppUI extends JFrame implements ActionListener  {
         /*
         Control Panel Setup
         */
+        
+//        controlGrid = new GridLayout(2, 4, 80, 50);
+        
         pnlControl.setBackground(Color.PINK);
-        pnlControl.setLayout(new GridLayout(1, 4, 5, 5));
+        pnlControl.setLayout(controlGrid);
+        
 
 
+        pnlControl.add(clearButton);
+        clearButton.setBackground(Color.WHITE);
+        clearButton.addActionListener(this);
+        
+        
+        startButton.setPreferredSize(new Dimension(50, 50));
         pnlControl.add(startButton);
         startButton.setBackground(Color.WHITE);
         startButton.addActionListener(this);
-
-        pnlControl.add(new JLabel("Speed:"));
-        pnlControl.add(inputSpeedTextField);
-
+        
         pnlControl.add(quitButton);
-        quitButton.setBackground(Color.RED);
+        quitButton.setBackground(Color.WHITE);
         quitButton.addActionListener(this);
 
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridwidth = 1;
+        c.weightx = .01;
+        c.weighty = .2;
+        c.gridx = 0;
+        c.gridy = 1;
+        JLabel refreshRateLabel = new JLabel("Refresh Rate (Hz)", JLabel.CENTER);
+        refreshRateLabel.setLabelFor(inputRefreshRateTextField);
+        pnlControl.add(inputRefreshRateTextField, c);
+
+        JLabel speedLabel = new JLabel("Speed (pix/sec)");
+        speedLabel.setLabelFor(inputSpeedTextField);
+        pnlControl.add(inputSpeedTextField, c);
+        
+        JLabel directionLabel = new JLabel("Direction");
+        directionLabel.setLabelFor(inputDirectionTextField);
+        pnlControl.add(inputDirectionTextField, c);
+        
+      
         /*
         Clock Handler Setup
         */
@@ -84,7 +115,7 @@ public class AppUI extends JFrame implements ActionListener  {
 
         this.setSize(1920,1040);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("223J Assignment 2");
+        this.setTitle("223J Assignment 3");
         this.setVisible(true); 
     }
 
