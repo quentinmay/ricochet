@@ -24,14 +24,17 @@ import javax.swing.Timer;
 public class AppUI extends JFrame implements ActionListener  {
     
     private JPanel pnlTitle = new JPanel();
-    private JPanel pnlField = new JPanel();
+    private RicochetField pnlField = new RicochetField();
     private JPanel pnlControl = new JPanel();
+    
     private GridBagLayout controlGrid = new GridBagLayout();
     private Clockhandlerclass clockhandler;
     
     private JTextField inputRefreshRateTextField = new JTextField();
     private JTextField inputSpeedTextField = new JTextField();
     private JTextField inputDirectionTextField = new JTextField();
+    private JTextField inputLocationX = new JTextField();
+    private JTextField inputLocationY = new JTextField();
     
     private JButton startButton = new JButton("Start");
     private JButton quitButton = new JButton("Quit");
@@ -73,49 +76,81 @@ public class AppUI extends JFrame implements ActionListener  {
         pnlControl.setLayout(controlGrid);
         
 
-
-        pnlControl.add(clearButton);
-        clearButton.setBackground(Color.WHITE);
-        clearButton.addActionListener(this);
-        
-        
-        startButton.setPreferredSize(new Dimension(50, 50));
-        pnlControl.add(startButton);
-        startButton.setBackground(Color.WHITE);
-        startButton.addActionListener(this);
-        
-        pnlControl.add(quitButton);
-        quitButton.setBackground(Color.WHITE);
-        quitButton.addActionListener(this);
-
         GridBagConstraints c = new GridBagConstraints();
         c.gridwidth = 1;
         c.weightx = .01;
         c.weighty = .2;
         c.gridx = 0;
-        c.gridy = 1;
-        JLabel refreshRateLabel = new JLabel("Refresh Rate (Hz)", JLabel.CENTER);
-        refreshRateLabel.setLabelFor(inputRefreshRateTextField);
-        pnlControl.add(inputRefreshRateTextField, c);
+        c.gridy = 0;
+        
+        pnlControl.add(clearButton, c);
+        clearButton.setBackground(Color.WHITE);
+        clearButton.addActionListener(this);
+        
+        
+//        startButton.setPreferredSize(new Dimension(50, 50));
 
-        JLabel speedLabel = new JLabel("Speed (pix/sec)");
-        speedLabel.setLabelFor(inputSpeedTextField);
-        pnlControl.add(inputSpeedTextField, c);
+        c.gridx = 1;
+        pnlControl.add(startButton, c);
+        startButton.setBackground(Color.WHITE);
+        startButton.addActionListener(this);
         
-        JLabel directionLabel = new JLabel("Direction");
-        directionLabel.setLabelFor(inputDirectionTextField);
-        pnlControl.add(inputDirectionTextField, c);
         
-      
+        c.gridx = 2;
+        pnlControl.add(quitButton, c);
+        quitButton.setBackground(Color.WHITE);
+        quitButton.addActionListener(this);
+        
+        
+        c.gridx = 3;
+        JPanel nestedLocation = new JPanel();
+        nestedLocation.setBackground(Color.PINK);
+        nestedLocation.setLayout(new GridLayout(3, 2, 5, 20));
+        nestedLocation.add(new JLabel("Ball Location:"));
+        nestedLocation.add(new JLabel(" "));
+        nestedLocation.add(new JLabel("X:"));
+        nestedLocation.add(inputLocationX);
+        nestedLocation.add(new JLabel("Y:"));
+        nestedLocation.add(inputLocationY);
+        pnlControl.add(nestedLocation, c);
+
+        
+        c.gridx = 0;
+        c.gridy = 1;
+        JPanel nestedRefreshRate = new JPanel();
+        nestedRefreshRate.setBackground(Color.PINK);
+        nestedRefreshRate.setLayout(new GridLayout(2, 1));
+        nestedRefreshRate.add(new JLabel("Refresh Rate (Hz)"));
+        nestedRefreshRate.add(inputRefreshRateTextField);
+        pnlControl.add(nestedRefreshRate, c);
+
+        c.gridx = 1;
+        JPanel nestedSpeed = new JPanel();
+        nestedSpeed.setBackground(Color.PINK);
+        nestedSpeed.setLayout(new GridLayout(2, 1));
+        nestedSpeed.add(new JLabel("Speed (pix/sec)"));
+        nestedSpeed.add(inputSpeedTextField);
+        pnlControl.add(nestedSpeed, c);
+        
+        c.gridx = 2;
+        JPanel nestedDirection = new JPanel();
+        nestedDirection.setBackground(Color.PINK);
+        nestedDirection.setLayout(new GridLayout(2, 1));
+        nestedDirection.add(new JLabel("Direction (Degrees)"));
+        nestedDirection.add(inputDirectionTextField);
+        pnlControl.add(nestedDirection, c);
+        
+        
         /*
         Clock Handler Setup
         */
         clockhandler = new Clockhandlerclass();
-        timer = new Timer(10, clockhandler); //Cant change speed that it updates without changing the distance travelled manually in Quad.
-
+        timer = new Timer(10, clockhandler);
+        
+        
         this.setSize(1920,1040);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("223J Assignment 3");
+        this.setTitle("Ricochet Ball");
         this.setVisible(true); 
     }
 
@@ -123,15 +158,31 @@ public class AppUI extends JFrame implements ActionListener  {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == startButton) {
                 if (startButton.getText() == "Start") { //When click start, initialize the ball then change the text to pause
+                    System.out.println("Start Button called");
                     try {
                         double speed = Double.parseDouble(inputSpeedTextField.getText());
                         if (Double.isNaN(speed) || speed <= 0) throw new Exception(); // If the inputSpeed isnt a double or speed is negative or zero, throw an error;
-//                        pnlField.initializeBall(speed); // needs to be switched to the double parser that the professor prefers.
-                        startButton.setText("Pause");
-                        System.out.println("Start Button called");
+                        double refreshRate = Double.parseDouble(inputRefreshRateTextField.getText());
+                        if (Double.isNaN(refreshRate) || refreshRate <= 0) throw new Exception();
+                        double direction = Double.parseDouble(inputDirectionTextField.getText());
+                        if (Double.isNaN(direction) || direction < 0 || direction > 360) throw new Exception();
+                        double locationX = Double.parseDouble(inputLocationX.getText());
+                        if (Double.isNaN(locationX) || locationX < 0) throw new Exception();
+                        double locationY = Double.parseDouble(inputLocationY.getText());
+                        if (Double.isNaN(locationY) || locationY < 0) throw new Exception();
+                        
+                        
+                        pnlField.initializeBall(speed, locationX, locationY);
+                        
+
+                        //delay= 1000ms/hz. Converts refresh rate into delay between ticks.
+                        timer.setDelay((int)(1000/refreshRate));
+                        
                         timer.start();
+                        startButton.setText("Pause");
+                        
                     } catch (Exception err) {
-                        inputSpeedTextField.setText("ERROR");
+                        System.out.println("Error");
                     }
                 } else if (startButton.getText() == "Pause") { //When paused, just stop timer and change button to resume.
                     timer.stop();
