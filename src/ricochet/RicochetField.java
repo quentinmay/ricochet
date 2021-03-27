@@ -26,20 +26,36 @@ public class RicochetField extends JPanel {
         g.setColor(Color.RED);
         
         int wall = 0;
+        double changeX = 0;
+        double changeY = 0;
+
         if ((ballPosition.x + deltaX + ballRadius) >= this.getSize().width) { //Ran into right wall.
             wall = 1;
+            changeX = this.getSize().width - (ballPosition.x + ballRadius);
+            changeY = (deltaY * changeX) / deltaX;
         }else if ((ballPosition.y + deltaY + ballRadius) >= this.getSize().height) { //Ran into bottom wall
             wall = 4;
+            changeY = this.getSize().height - (ballPosition.y + ballRadius);
+            changeX = (deltaX * changeY) / deltaY;
+            
         } else if ((ballPosition.x + deltaX - ballRadius) <= 0) { //Ran into left wall
             wall = 3;
+            changeX = -1 * (ballPosition.x - ballRadius);
+            changeY = (deltaY * changeX) / deltaX;
         } else if ((ballPosition.y + deltaY - ballRadius) <= 0) { //Ran into top wall
             wall = 2;
+            changeY =  -1 * (ballPosition.y - ballRadius);
+            changeX = (deltaX * changeY) / deltaY;
         } else { //Didnt run into any walls
             ballPosition.setLocation(ballPosition.getX() + deltaX, ballPosition.getY() + deltaY);
             g.fillOval((int)(ballPosition.getX() - ballRadius), (int)(ballPosition.getY() - ballRadius), ballRadius*2, ballRadius*2); 
             return;
         }
-            //At this point, we are too close to the wall, so we just change our deltas
+            //get the point where it WOULD contact the wall and set the ball to there. So were technically teleporting to the wall.
+            ballPosition.setLocation(ballPosition.getX() + changeX, ballPosition.getY() + changeY);
+            g.fillOval((int)(ballPosition.getX() - ballRadius), (int)(ballPosition.getY() - ballRadius), ballRadius*2, ballRadius*2); 
+            
+            //At this point, we are too close to the wall, so we just change our deltas for the change in direction
             double[] delta = comp.computeDeltaAfterBounce(deltaX, deltaY, wall, this.distance_traveled_per_tic);
             deltaX = delta[0];
             deltaY = delta[1];

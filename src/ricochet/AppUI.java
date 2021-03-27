@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ricochet;
 
 import java.awt.BorderLayout;
@@ -58,7 +53,7 @@ public class AppUI extends JFrame implements ActionListener  {
         Title Panel Setup
         */
         pnlTitle.setBackground(Color.YELLOW);
-        pnlTitle.add(new JLabel("Diamond Animation by Quentin May"));
+        pnlTitle.add(new JLabel("Ricochet Ball by Quentin May"));
 
         /*
         Field Panel Setup
