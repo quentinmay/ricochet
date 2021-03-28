@@ -72,11 +72,11 @@ public class AppUI extends JFrame implements ActionListener  {
     private GridBagLayout controlGrid = new GridBagLayout();
     private Clockhandlerclass clockhandler;
     
-    private JTextField inputRefreshRateTextField = new JTextField("100");
-    private JTextField inputSpeedTextField = new JTextField("800");
-    private JTextField inputDirectionTextField = new JTextField("120");
-    private JTextField inputLocationX = new JTextField("400");
-    private JTextField inputLocationY = new JTextField("200");
+    private JTextField inputRefreshRateTextField = new JTextField("0");
+    private JTextField inputSpeedTextField = new JTextField("0");
+    private JTextField inputDirectionTextField = new JTextField("0");
+    private JTextField inputLocationX = new JTextField("952");
+    private JTextField inputLocationY = new JTextField("375");
     
     private JButton startButton = new JButton("Start");
     private JButton quitButton = new JButton("Quit");
@@ -192,6 +192,8 @@ public class AppUI extends JFrame implements ActionListener  {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Ricochet Ball");
         this.setVisible(true); 
+        pnlField.initializeBall(0.0, 952, 375, 0.0, 0.0);
+        pnlField.repaint();
     }
 
         @Override
@@ -201,9 +203,9 @@ public class AppUI extends JFrame implements ActionListener  {
                     System.out.println("Start Button called");
                     try {
                         double speed = Double.parseDouble(inputSpeedTextField.getText());
-                        if (Double.isNaN(speed) || speed <= 0) throw new Exception(); // If the inputSpeed isnt a double or speed is negative or zero, throw an error;
+                        if (Double.isNaN(speed)) throw new Exception(); // If the inputSpeed isnt a double or speed is negative or zero, throw an error;
                         double refreshRate = Double.parseDouble(inputRefreshRateTextField.getText());
-                        if (Double.isNaN(refreshRate) || refreshRate <= 0) throw new Exception();
+                        if (Double.isNaN(refreshRate)) throw new Exception();
                         double direction = Double.parseDouble(inputDirectionTextField.getText());
                         if (Double.isNaN(direction) || direction < 0 || direction > 360) throw new Exception();
                         double locationX = Double.parseDouble(inputLocationX.getText());
@@ -216,7 +218,6 @@ public class AppUI extends JFrame implements ActionListener  {
                         
 
                         //delay= 1000ms/hz. Converts refresh rate into delay between ticks.
-                        System.out.println("Delay: " + (int)(1000/refreshRate));
                         timer.setDelay((int)(1000/refreshRate));
                         
                         timer.start();
@@ -237,12 +238,14 @@ public class AppUI extends JFrame implements ActionListener  {
             } else if (e.getSource() == clearButton) {
                 //clear the boxes   
                 timer.stop();
-                inputSpeedTextField.setText("");
-                inputRefreshRateTextField.setText("");
-                inputDirectionTextField.setText("");
-                inputLocationX.setText("");
-                inputLocationY.setText("");
+                inputSpeedTextField.setText("0");
+                inputRefreshRateTextField.setText("0");
+                inputDirectionTextField.setText("0");
+                inputLocationX.setText("952");
+                inputLocationY.setText("375");
                 startButton.setText("Start");
+                pnlField.initializeBall(0.0, 952, 375, 0.0, 0.0);
+                pnlField.repaint();
             }
         }
 
@@ -250,10 +253,9 @@ public class AppUI extends JFrame implements ActionListener  {
              public void actionPerformed(ActionEvent event) {
 
                  if (event.getSource() == timer) {
-                         pnlField.repaint();
-
-
-                
+                    pnlField.repaint();
+                    inputLocationX.setText((int)pnlField.getBallPosition().x + "");
+                    inputLocationY.setText((int)pnlField.getBallPosition().y + "");
             }
          }
     }
